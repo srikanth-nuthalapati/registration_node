@@ -132,7 +132,7 @@ app.post('/register',upload.single('profile'),(req, res) => {
 
         conn.query(`select count(*) as count from register where username = ? `,[username],(err,info) => {
             if(err){
-                console.error("Error while checking username:", err.message);
+                console.error("Error while checking username:", err);
                 return res.send({
                     status: 500,
                     message: err.message
