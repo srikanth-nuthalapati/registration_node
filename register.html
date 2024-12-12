@@ -122,7 +122,6 @@
             const toastStatus = localStorage.getItem('toastStatus');
 
             if (toastMessage) {
-
                 showToast(toastMessage, toastStatus === 'success');
 
                 localStorage.removeItem('toastMessage');
@@ -233,29 +232,35 @@
                             method: 'POST',
                             body: formdata,
                         });
+
                         let response = await request.json();
-                        if (!response.status == 200) {
+                        if (response.status == 200) {
                             localStorage.setItem('toastMessage', response.message);
-                            localStorage.setItem('toastStatus', 'error');
+                            localStorage.setItem('toastStatus', 'success');
+                            console.log(response.message , "suc");  
                         }
                         else {
                             localStorage.setItem('toastMessage', response.message);
-                            localStorage.setItem('toastStatus', 'success');
+                            localStorage.setItem('toastStatus', '');
+                            console.log(response.message, 'err');  
                         }
                     }
                     catch (e) {
-                        localStorage.setItem('toastMessage', e);
+                        localStorage.setItem('toastMessage', e.message);
                         localStorage.setItem('toastStatus', 'error');
+                        console.log("hi");
                     }
-                    location.reload();
+                    // location.reload();
                 }
                 else {
                     showToast('both passwords do  not match', false);
+                    console.log('both passwords do  not match');                 
                     return false;
                 }
             }
             else {
                 showToast('enter all the fields', false);
+                console.log('both passwords do  not match');
                 return false;
             }
 

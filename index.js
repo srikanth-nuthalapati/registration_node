@@ -132,12 +132,13 @@ app.post('/register',upload.single('profile'),(req, res) => {
 
         conn.query(`select count(*) as count from register where username = ? `,[username],(err,info) => {
             if(err){
+                console.error("Error while checking username:", err.message);
                 return res.send({
                     status: 500,
                     message: err.message
                 })
             }
-            
+            console.log("Username check result:", info);
             if(info[0].count > 0){
                 return  res.send({
                     status: 400,
@@ -151,17 +152,19 @@ app.post('/register',upload.single('profile'),(req, res) => {
             let st = `insert into register(username,email,password,image) values(?, ?, ?, ?) `;
 
             conn.query(st, [username, email, hashPass, profilePicPath, ], (err,info) => {
+                console.error("Error during user registration:", err.message);  // Log detailed error
                 if(err){
-                    res.send({
+                    return res.send({
                         status:400,
                         message: err.message,
-                    })
+                    });
                 }
                 else{
-                    res.send({
+                    console.log("User registered successfully:", info);
+                    return res.send({
                         status:200,
                         message: "user registered",
-                    })
+                    });
                 }
             });
            
