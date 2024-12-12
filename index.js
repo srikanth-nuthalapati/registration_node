@@ -148,9 +148,7 @@ app.post('/register',upload.single('profile'),(req, res) => {
             let salt = 10;
             let hashPass = bcrypt.hashSync(password , salt);
 
-            let st = `insert into register(username,email,password,image)
-            values(?, ?, ?, ?);  
-            `;
+            let st = `insert into register(username,email,password,image) values(?, ?, ?, ?) `;
 
             conn.query(st, [username, email, hashPass, profilePicPath, ], (err,info) => {
                 if(err){
@@ -166,6 +164,7 @@ app.post('/register',upload.single('profile'),(req, res) => {
                     })
                 }
             });
+            conn.end();
         });
 
 });
