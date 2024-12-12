@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <form action="" enctype="multipart/form-data" method="post">
+        <div class="grp">
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" placeholder="username">
+        </div>
+
+        <div class="grp">
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" placeholder="email" required>
+            <button id="send-otp">send otp</button>
+        </div>
+
+        <div class="grp">
+            <label for="otp">OTP:</label>
+            <input type="number" name="otp" id="otp" placeholder="otp">
+            <button id="verify-otp">verify</button>
+        </div>
+
+        <div class="grp">
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" placeholder="password">
+        </div>
+
+        <div class="grp">
+            <label for="confirm_pass">Confirm Password:</label>
+            <input type="text" name="confirm_pass" id="confirm_pass" placeholder="confirm password">
+        </div>
+        <small id="confirm-message" style="color: red; display: block;margin: -10px 0 5px;"></small>
+
+        <div id="password-rules">
+            <ul>
+                <li id="lowercase" class="invalid">At least one lowercase letter (a-z)</li>
+                <li id="uppercase" class="invalid">At least one uppercase letter (A-Z)</li>
+                <li id="digit" class="invalid">At least one digit (0-9)</li>
+                <li id="special" class="invalid">At least one special character (!@#$%^&*)</li>
+                <li id="length" class="invalid">At least 8 characters long</li>
+            </ul>
+        </div>
+
+        <div class="grp">
+            <label for="profile_photo">Profile:</label>
+            <input type="file" name="profile" id="profile_photo">
+        </div>
+
+        <button id="submit-btn">submit</button>
+
+    </form>
+
+    <div id="toast" class="toast">
+        <span id="toast-message"></span>
+    </div>
+
+    <script>
+
+        function showToast(message, isSuccess = true) {
+            const toast = document.getElementById("toast");
+            const toastMessage = document.getElementById("toast-message");
+            toastMessage.textContent = message;
+            toast.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336";
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 1500);
+        }
+
+        let username = document.querySelector("#username");
+        let email = document.querySelector("#email");
+        let otp = document.querySelector("#otp");
+
+        let password = document.querySelector("#password");
+        let confirm_pass = document.querySelector("#confirm_pass");
+        let confirmMessage = document.querySelector("#confirm-message");
+
+        let fileInput = document.querySelector("#profile_photo");
+
+        let send_otp = document.querySelector("#send-otp");
+        let verify_otp = document.querySelector("#verify-otp");
+        let submitbtn = document.querySelector("#submit-btn");
+
+
+        send_otp.addEventListener("click", async (e) => {
+            if (email.value === '') {
+                return;
+            }
+            e.preventDefault();
+            try {
+                let request = await fetch("http://localhost:3000/otp/send", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: email.value })
+                });
+
+                let response = await request.json();
+                if (response.status == 200) {
+                    showToast(response.message, true);
+                }
+                else {
+                    showToast(response.message, false);
+                }
+            }
+            catch (err) {
+                showToast(response.message, false);
+            }
+        });
+
+        window.addEventListener("load", () => {
+            const toastMessage = localStorage.getItem('toastMessage');
+            const toastStatus = localStorage.getItem('toastStatus');
+
+            if (toastMessage) {
+
+                showToast(toastMessage, toastStatus === 'success');
+
+                localStorage.removeItem('toastMessage');
+                localStorage.removeItem('toastStatus');
+            }
+        });
+
+        verify_otp.addEventListener("click", async (e) => {
+            if (otp.value == '' || email.value == '') {
+                return;
+            }
+
+            e.preventDefault();
+            try {
+                let request = await fetch('http://localhost:3000/otp/verify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email.value,
+                        code: otp.value,
+                    }),
+                });
+                let response = await request.json();
+                if (response.status == 200) {
+                    localStorage.setItem('toastMessage', response.message);
+                    localStorage.setItem('toastStatus', 'success');
+                }
+                else {
+                    localStorage.setItem('toastMessage', response.message);
+                    localStorage.setItem('toastStatus', 'error');
+                }
+            }
+            catch (err) {
+                localStorage.setItem('toastMessage', "Failed to verify OTP. Please try again.");
+                localStorage.setItem('toastStatus', 'success');
+            }
+            location.reload();
+        });
+
+        password.addEventListener("focusout", () => {
+            document.querySelector("#password-rules").classList.remove("active");
+        });
+
+        password.addEventListener("focusin", () => {
+            document.querySelector("#password-rules").classList.add("active");
+        });
+
+        password.addEventListener('input', () => {
+            document.querySelector("#password-rules").classList.add("active");
+            if (password.value == "") {
+                document.querySelector("#password-rules").classList.remove("active");
+            }
+            let rules = {
+                lowercase: /[a-z]/,
+                uppercase: /[A-Z]/,
+                digit: /[0-9]/,
+                special: /[!@#$%^&*]/,
+                length: /.{8,}$/,
+            };
+
+            for (let rule in rules) {
+                let ruleElement = document.querySelector(`#${rule}`);
+                if (rules[rule].test(password.value)) {
+                    ruleElement.classList.remove("invalid");
+                    ruleElement.classList.add("valid");
+                } else {
+                    ruleElement.classList.remove("valid");
+                    ruleElement.classList.add("invalid");
+                }
+            }
+        });
+
+        confirm_pass.addEventListener("input", () => {
+            if (password.value === confirm_pass.value) {
+                confirm_pass.style.borderColor = "green";
+                confirmMessage.textContent = "Passwords match!";
+                confirmMessage.style.color = "green";
+            }
+            else {
+                confirm_pass.style.borderColor = "red";
+                confirmMessage.textContent = "Passwords do not match!";
+                confirmMessage.style.color = "red";
+            }
+        });
+
+        fileInput.addEventListener("change", () => {
+            let file = fileInput.files[0];
+            if (!file.type.startsWith('image/')) {
+                showToast('pls upload a valid file', false);
+                fileInput.value = '';
+            }
+        });
+
+        submitbtn.addEventListener("click", async (e) => {
+            let form = document.forms[0];
+            e.preventDefault();
+            if (!username.value == '' && !email.value == '' && !password.value == '') {
+                if (password.value === confirm_pass.value) {
+                    let formdata = new FormData();
+                    formdata.append('username', username.value);
+                    formdata.append('email', email.value);
+                    formdata.append('password', password.value);
+                    formdata.append('profile', fileInput.files[0]);
+                    try {
+                        let request = await fetch('http://localhost:3000/register', {
+                            method: 'POST',
+                            body: formdata,
+                        });
+                        let response = await request.json();
+                        if (!response.status == 200) {
+                            localStorage.setItem('toastMessage', response.message);
+                            localStorage.setItem('toastStatus', 'error');
+                        }
+                        else {
+                            localStorage.setItem('toastMessage', response.message);
+                            localStorage.setItem('toastStatus', 'success');
+                        }
+                    }
+                    catch (e) {
+                        localStorage.setItem('toastMessage', err.message);
+                        localStorage.setItem('toastStatus', 'success');
+                    }
+                    location.reload();
+                }
+                else {
+                    showToast('both passwords do  not match', false);
+                    return false;
+                }
+            }
+            else {
+                showToast('enter all the fields', false);
+                return false;
+            }
+
+        });
+
+
+
+    </script>
+</body>
+
+</html>

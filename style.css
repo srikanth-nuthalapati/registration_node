@@ -1,0 +1,115 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 20px;
+}
+
+form {
+    width: 400px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.grp {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.grp label {
+    flex: 0 0 140px;
+    text-align: right;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.grp input, 
+.grp button {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+input[type="file"] {
+    padding: 2px;
+}
+
+input#confirm_pass {
+    outline: none;
+}
+
+#password-rules {
+    padding: 10px;
+    position: absolute;
+    right: 100px;
+    top: 150px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: none;
+}
+
+#password-rules.active {
+    display: block;
+}
+
+#password-rules ul {
+    list-style: none;
+    padding-left: 0;
+}
+  
+#password-rules li {
+margin: 5px 0;
+}
+
+.invalid {
+color: red;
+}
+
+.valid {
+color: green;
+}
+  
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    margin: 0 auto;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 15px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 80px;
+    transform: translateX(-50%);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: visibility 0s, opacity 0.5s ease-in-out;
+    opacity: 0;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+}
