@@ -6,7 +6,16 @@ const multer = require("multer");
 const path = require("path");
 const conn = require('./dao');
 const bcrypt = require('bcrypt');
+const fs = require('fs');
 require("dotenv").config()
+
+
+const uploadsPath = path.join(__dirname, 'uploads');
+
+// Create the uploads folder if it doesn't exist
+if (!fs.existsSync(uploadsPath)) {
+  fs.mkdirSync(uploadsPath, { recursive: true });
+}
 
 const app = express()
 
