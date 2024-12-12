@@ -70,9 +70,9 @@
             toastMessage.textContent = message;
             toast.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336";
             toast.classList.add("show");
-            setTimeout(() => {
-                toast.classList.remove("show");
-            }, 1500);
+            // setTimeout(() => {
+            //     // toast.classList.remove("show");
+            // }, 1500);
         }
 
         let username = document.querySelector("#username");
@@ -96,7 +96,7 @@
             }
             e.preventDefault();
             try {
-                let request = await fetch("http://localhost:3000/otp/send", {
+                let request = await fetch("https://registration-node.onrender.com/otp/send", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -137,7 +137,7 @@
 
             e.preventDefault();
             try {
-                let request = await fetch('http://localhost:3000/otp/verify', {
+                let request = await fetch('https://registration-node.onrender.com/otp/verify', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -219,17 +219,17 @@
         });
 
         submitbtn.addEventListener("click", async (e) => {
-            let form = document.forms[0];
             e.preventDefault();
             if (!username.value == '' && !email.value == '' && !password.value == '') {
                 if (password.value === confirm_pass.value) {
+                    let form = document.forms[0];
                     let formdata = new FormData();
                     formdata.append('username', username.value);
                     formdata.append('email', email.value);
                     formdata.append('password', password.value);
                     formdata.append('profile', fileInput.files[0]);
                     try {
-                        let request = await fetch('http://localhost:3000/register', {
+                        let request = await fetch('https://registration-node.onrender.com/register', {
                             method: 'POST',
                             body: formdata,
                         });
@@ -244,8 +244,8 @@
                         }
                     }
                     catch (e) {
-                        localStorage.setItem('toastMessage', err.message);
-                        localStorage.setItem('toastStatus', 'success');
+                        localStorage.setItem('toastMessage', e);
+                        localStorage.setItem('toastStatus', 'error');
                     }
                     location.reload();
                 }
