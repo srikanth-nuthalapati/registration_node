@@ -164,7 +164,7 @@ app.post('/register',upload.single('profile'),(req, res) => {
                     })
                 }
             });
-            conn.end();
+           
         });
 
 });
