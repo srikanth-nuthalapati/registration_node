@@ -70,9 +70,9 @@
             toastMessage.textContent = message;
             toast.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336";
             toast.classList.add("show");
-            // setTimeout(() => {
-            //     // toast.classList.remove("show");
-            // }, 1500);
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 1500);
         }
 
         let username = document.querySelector("#username");
@@ -148,19 +148,15 @@
                 });
                 let response = await request.json();
                 if (response.status == 200) {
-                    localStorage.setItem('toastMessage', response.message);
-                    localStorage.setItem('toastStatus', 'success');
+                    showToast(response.message, true);
                 }
                 else {
-                    localStorage.setItem('toastMessage', response.message);
-                    localStorage.setItem('toastStatus', 'error');
+                    showToast(response.message, false);
                 }
             }
             catch (err) {
-                localStorage.setItem('toastMessage', "Failed to verify OTP. Please try again.");
-                localStorage.setItem('toastStatus', 'success');
+                showToast("Failed to verify OTP. Please try again.", false);
             }
-            location.reload();
         });
 
         password.addEventListener("focusout", () => {
@@ -237,30 +233,25 @@
                         if (response.status == 200) {
                             localStorage.setItem('toastMessage', response.message);
                             localStorage.setItem('toastStatus', 'success');
-                            console.log(response.message , "suc");  
                         }
                         else {
                             localStorage.setItem('toastMessage', response.message);
                             localStorage.setItem('toastStatus', '');
-                            console.log(response.message, 'err');  
                         }
                     }
                     catch (e) {
                         localStorage.setItem('toastMessage', e.message);
                         localStorage.setItem('toastStatus', 'error');
-                        console.log("hi");
                     }
-                    // location.reload();
+                    location.reload();
                 }
                 else {
-                    showToast('both passwords do  not match', false);
-                    console.log('both passwords do  not match');                 
+                    showToast('both passwords do  not match', false);                 
                     return false;
                 }
             }
             else {
                 showToast('enter all the fields', false);
-                console.log('both passwords do  not match');
                 return false;
             }
 
